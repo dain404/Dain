@@ -1,0 +1,177 @@
+/*=================================================================
+  TOUS LES JOURS - CUSTOM STYLESHEET
+  Theme Color: #c8a96e (Warm Beige) 
+=================================================================*/
+
+:root {
+    --primary-color: #c8a96e;
+    --primary-dark: #b09156;
+    --primary-light: #e6d3af;
+    --bg-light: #faf8f5;
+    --text-dark: #333333;
+    --transition: all 0.3s ease-in-out;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* Typography */
+.font-inter {
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.font-playfair {
+    font-family: 'Lora', serif;
+}
+
+/* Custom Colors & Backgrounds */
+.text-primary-custom {
+    color: var(--primary-color) !important;
+}
+.bg-primary-custom {
+    background-color: var(--primary-color) !important;
+}
+.bg-light-custom {
+    background-color: var(--bg-light) !important;
+}
+
+/* Custom Buttons */
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transition: var(--transition);
+}
+.btn-primary-custom:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(200, 169, 110, 0.3);
+}
+
+.btn-outline-custom {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: transparent;
+    transition: var(--transition);
+}
+.btn-outline-custom:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Hover Effects */
+.hover-primary:hover {
+    color: var(--primary-color) !important;
+    transition: var(--transition);
+}
+.hover-bg-light:hover {
+    background-color: #f8f9fa !important;
+    transition: var(--transition);
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Navbar */
+.navbar .nav-link {
+    position: relative;
+    font-weight: 500;
+}
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+    transform: translateX(-50%);
+}
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
+    width: 80%;
+}
+
+/* Hero Banner Overlay Animation */
+.hero-banner .overlay {
+    transition: background 0.5s ease;
+}
+.hero-banner:hover .overlay {
+    background: rgba(0,0,0,0.4) !important;
+}
+
+/* Custom Divider */
+.divider-custom {
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+}
+
+/* Cards (Products & Categories) */
+.product-card {
+    transition: var(--transition);
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+.product-img-wrapper img {
+    transition: transform 0.5s ease;
+}
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.08);
+}
+.product-action {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: var(--transition);
+    z-index: 2;
+}
+.product-card:hover .product-action {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.category-card {
+    transition: var(--transition);
+}
+.category-card:hover {
+    border-color: var(--primary-color) !important;
+    transform: translateY(-3px);
+}
+
+/* Sidebar Admin */
+.admin-nav .nav-link {
+    transition: var(--transition);
+}
+.admin-nav .nav-link:hover {
+    padding-left: 1.25rem !important;
+}
+
+/* Utilities */
+.w-20px {
+    width: 20px;
+    text-align: center;
+}
+.custom-radio input[type="radio"]:checked + label {
+    color: var(--primary-color);
+}
+.custom-radio {
+    transition: var(--transition);
+}
+.custom-radio:hover {
+    border-color: var(--primary-light) !important;
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}

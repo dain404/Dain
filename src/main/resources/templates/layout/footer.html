@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="bg-dark text-light pt-5 pb-3 font-inter">
+    <div class="container">
+        <div class="row gy-4">
+            <!-- Cột 1: Thông tin thương hiệu -->
+            <div class="col-lg-4 col-md-6">
+                <h4 class="text-primary-custom font-playfair mb-4"><i class="fa-solid fa-cake-candles me-2"></i>MeDoNgot</h4>
+                <p class="text-secondary mb-4">Hệ thống cửa hàng bánh ngọt phong cách Pháp, mang đến hương vị tuyệt hảo và những khoảnh khắc ngọt ngào nhất mỗi ngày.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-light fs-5 hover-primary"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-light fs-5 hover-primary"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-light fs-5 hover-primary"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <!-- Cột 2: Liên kết nhanh -->
+            <div class="col-lg-2 col-md-6">
+                <h5 class="text-white mb-4">Khám Phá</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    <li><a th:href="@{/}" class="text-secondary text-decoration-none hover-primary">Trang chủ</a></li>
+                    <li><a th:href="@{/products}" class="text-secondary text-decoration-none hover-primary">Sản phẩm</a></li>
+                    <li><a th:href="@{/about}" class="text-secondary text-decoration-none hover-primary">Về chúng tôi</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-primary">Tin tức</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 3: Chăm sóc khách hàng -->
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-white mb-4">Chính Sách</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    <li><a href="#" class="text-secondary text-decoration-none hover-primary">Chính sách giao hàng</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-primary">Chính sách đổi trả</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-primary">Bảo mật thông tin</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-primary">Điều khoản chung</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 4: Liên hệ -->
+            <div class="col-lg-3 col-md-6">
+                <h5 class="text-white mb-4">Liên Hệ</h5>
+                <ul class="list-unstyled d-flex flex-column gap-3 text-secondary">
+                    <li><i class="fa-solid fa-location-dot me-2 text-primary-custom"></i> 123 Đường Bánh Ngọt, Quận 1, TP.HCM</li>
+                    <li><i class="fa-solid fa-phone me-2 text-primary-custom"></i> 1900 1234</li>
+                    <li><i class="fa-solid fa-envelope me-2 text-primary-custom"></i> contact@[email].com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="border-secondary mt-5 mb-3">
+        <div class="text-center text-secondary small">
+            &copy; 2026 MeDoNgot. All rights reserved.
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head('Lịch Sử Đơn Hàng')}"></head>
+<body class="bg-light-custom font-inter">
+
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <div class="container py-5">
+        <h2 class="font-playfair text-primary-custom mb-4">Lịch Sử Đơn Hàng</h2>
+
+        <!-- Flash messages -->
+        <div th:if="${thongBaoDatHang}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><span th:text="${thongBaoDatHang}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${thongBao}" class="alert alert-info alert-dismissible fade show rounded-3" role="alert">
+            <i class="fa-solid fa-info-circle me-2"></i><span th:text="${thongBao}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${#lists.isEmpty(donHangs) && donHang == null}" class="card border-0 shadow-sm rounded-4 text-center py-5">
+            <div class="card-body">
+                <i class="fa-solid fa-box-open fs-1 text-muted mb-3"></i>
+                <h5 class="text-muted mb-4">Bạn chưa có đơn hàng nào!</h5>
+                <a th:href="@{/products}" class="btn btn-primary-custom rounded-pill px-4">Bắt đầu mua sắm</a>
+            </div>
+        </div>
+
+        <!-- Chế độ xem danh sách đơn hàng -->
+        <div th:if="${not #lists.isEmpty(donHangs) && donHang == null}">
+            <div class="card border-0 shadow-sm rounded-4 mb-4" th:each="dh : ${donHangs}">
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="text-muted small">Mã đơn hàng:</span>
+                        <span class="fw-bold fs-5 text-dark ms-1">#<span th:text="${dh.donHangId}"></span></span>
+                        <span class="text-muted small ms-3"><i class="fa-regular fa-clock me-1"></i><span th:text="${#temporals.format(dh.ngayDatHang, 'dd/MM/yyyy HH:mm')}">Date</span></span>
+                    </div>
+                    <div>
+                        <span class="badge" 
+                              th:classappend="${dh.trangThai.name() == 'CHO_XAC_NHAN' ? 'bg-warning text-dark' : 
+                                             (dh.trangThai.name() == 'HOAN_THANH' ? 'bg-success' : 
+                                             (dh.trangThai.name() == 'HUY' ? 'bg-danger' : 'bg-info'))}"
+                              th:text="${dh.trangThai.tenHienThi}">Trạng thái</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3" th:each="ct : ${dh.chiTietDonHangs}">
+                        <img th:src="${ct.sanPham.hinhAnh}" class="rounded border object-fit-cover" width="50" height="50">
+                        <div class="ms-3 flex-grow-1">
+                            <div class="fw-bold" th:text="${ct.sanPham.tenSanPham}">Name</div>
+                            <div class="text-muted small">x <span th:text="${ct.soLuong}">1</span></div>
+                        </div>
+                        <div class="fw-medium text-end">
+                            <span th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'COMMA', 0, 'POINT')} + ' đ'">Total</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="text-muted">
+                    
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <span class="text-muted">Tổng tiền:</span>
+                            <span class="fs-5 fw-bold text-primary-custom ms-2" th:text="${#numbers.formatDecimal(dh.tongTien, 0, 'COMMA', 0, 'POINT')} + ' đ'">Total</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/orders/{id}(id=${dh.donHangId})}" class="btn btn-outline-secondary rounded-pill btn-sm px-3">Chi tiết</a>
+                            <form th:if="${dh.trangThai.name() == 'CHO_XAC_NHAN'}" th:action="@{/orders/{id}/huy(id=${dh.donHangId})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                <button type="submit" class="btn btn-outline-danger rounded-pill btn-sm px-3">Hủy đơn</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chế độ xem chi tiết 1 đơn hàng -->
+        <div th:if="${donHang != null}">
+            <div class="mb-4">
+                <a th:href="@{/orders}" class="text-decoration-none text-muted"><i class="fa-solid fa-arrow-left me-2"></i>Quay lại danh sách</a>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-primary-custom text-white py-3 rounded-top-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 font-playfair">Chi Tiết Đơn Hàng #<span th:text="${donHang.donHangId}"></span></h5>
+                    <span class="badge bg-light text-dark fs-6" th:text="${donHang.trangThai.tenHienThi}">Status</span>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="row mb-5 g-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3 text-uppercase fw-bold"><i class="fa-solid fa-location-dot me-2"></i>Địa chỉ nhận hàng</h6>
+                            <p class="mb-1 fw-bold" th:text="${donHang.nguoiDung.hoTen}">Name</p>
+                            <p class="mb-1 text-muted"><i class="fa-solid fa-phone me-2"></i><span th:text="${donHang.soDienThoaiNhan}">Phone</span></p>
+                            <p class="mb-0 text-muted"><i class="fa-solid fa-house me-2"></i><span th:text="${donHang.diaChiGiaoHang}">Address</span></p>
+                            <div class="mt-3 text-muted small" th:if="${donHang.ghiChu != null && !donHang.ghiChu.isBlank()}">
+                                <strong>Ghi chú:</strong> <span th:text="${donHang.ghiChu}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 border-start-md">
+                            <h6 class="text-muted mb-3 text-uppercase fw-bold"><i class="fa-solid fa-file-invoice me-2"></i>Thông tin đơn</h6>
+                            <p class="mb-1 text-muted"><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(donHang.ngayDatHang, 'dd/MM/yyyy HH:mm')}">Date</span></p>
+                            <p class="mb-1 text-muted" th:each="tt : ${donHang.thanhToans}">
+                                <strong>Thanh toán:</strong> <span th:text="${tt.phuongThucThanhToan}"></span> - 
+                                <span th:class="${tt.trangThaiThanhToan == 'DA_THANH_TOAN' ? 'text-success' : 'text-warning'}" th:text="${tt.trangThaiThanhToan}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mb-3 text-uppercase fw-bold border-bottom pb-2">Sản phẩm</h6>
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <tbody>
+                                <tr th:each="ct : ${donHang.chiTietDonHangs}" class="border-bottom">
+                                    <td style="width: 70px;">
+                                        <img th:src="${ct.sanPham.hinhAnh}" class="rounded border object-fit-cover" width="60" height="60">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/products/{id}(id=${ct.sanPham.sanPhamId})}" class="text-decoration-none text-dark fw-bold" th:text="${ct.sanPham.tenSanPham}">Name</a>
+                                    </td>
+                                    <td class="text-center text-muted">
+                                        <span th:text="${#numbers.formatDecimal(ct.donGia, 0, 'COMMA', 0, 'POINT')} + ' đ'">Price</span>
+                                        x <strong th:text="${ct.soLuong}">1</strong>
+                                    </td>
+                                    <td class="text-end fw-bold">
+                                        <span th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'COMMA', 0, 'POINT')} + ' đ'">Total</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-light rounded-3">
+                                <tr>
+                                    <td colspan="3" class="text-end py-3"><strong>Tổng cộng:</strong></td>
+                                    <td class="text-end py-3 text-primary-custom fs-4 fw-bold">
+                                        <span th:text="${#numbers.formatDecimal(donHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' đ'">Total</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:replace="~{layout/footer :: footer}"></div>
+</body>
+</html>

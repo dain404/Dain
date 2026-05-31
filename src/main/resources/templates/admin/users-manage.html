@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head('Quản Lý Người Dùng')}"></head>
+<body class="bg-light font-inter">
+
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            
+            <!-- Sidebar Admin -->
+            <div class="col-lg-2">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-3">
+                        <h6 class="text-uppercase fw-bold text-muted mb-3 px-3">Quản Trị</h6>
+                        <ul class="nav flex-column gap-1 admin-nav">
+                            <li class="nav-item">
+                                <a th:href="@{/admin}" class="nav-link rounded-3 text-dark hover-bg-light px-3 py-2">
+                                    <i class="fa-solid fa-chart-pie me-2 w-20px"></i>Tổng quan
+                                </a>
+                            </li>
+                            <li class="nav-item mt-1">
+                                <a th:href="@{/admin/products}" class="nav-link rounded-3 text-dark hover-bg-light px-3 py-2">
+                                    <i class="fa-solid fa-cake-candles me-2 w-20px"></i>Sản phẩm &amp; Danh mục
+                                </a>
+                            </li>
+                            <li class="nav-item mt-1">
+                                <a th:href="@{/admin/orders}" class="nav-link rounded-3 text-dark hover-bg-light px-3 py-2">
+                                    <i class="fa-solid fa-file-invoice-dollar me-2 w-20px"></i>Đơn hàng
+                                </a>
+                            </li>
+                            <li class="nav-item mt-1">
+                                <a th:href="@{/admin/users}" class="nav-link rounded-3 active text-primary-custom bg-light-custom fw-bold px-3 py-2">
+                                    <i class="fa-solid fa-users me-2 w-20px"></i>Khách hàng
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-10">
+                
+                <!-- Flash messages -->
+                <div th:if="${thanhCong}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i><span th:text="${thanhCong}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="font-playfair text-primary-custom mb-0">Quản Lý Người Dùng</h3>
+                    
+                    <form th:action="@{/admin/users}" method="get" class="d-flex w-25">
+                        <div class="input-group">
+                            <input type="text" name="keyword" class="form-control rounded-start-pill border-end-0" placeholder="Tìm theo tên, email..." th:value="${keyword}">
+                            <button class="btn border border-start-0 rounded-end-pill bg-white hover-bg-light" type="submit"><i class="fa-solid fa-magnifying-glass text-muted"></i></button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bảng Danh sách người dùng -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-muted">
+                                    <tr>
+                                        <th class="ps-4">ID</th>
+                                        <th>Khách hàng</th>
+                                        <th>Liên hệ</th>
+                                        <th>Vai trò</th>
+                                        <th>Ngày tham gia</th>
+                                        <th class="text-end pe-4">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="nd : ${nguoiDungs}">
+                                        <td class="ps-4 fw-bold text-muted">#<span th:text="${nd.userId}"></span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light-custom text-primary-custom rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                    <i class="fa-regular fa-user"></i>
+                                                </div>
+                                                <div class="fw-bold" th:text="${nd.hoTen}">Name</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="small"><i class="fa-solid fa-envelope me-1 text-muted"></i><span th:text="${nd.email}">Email</span></div>
+                                            <div class="small mt-1"><i class="fa-solid fa-phone me-1 text-muted"></i><span th:text="${nd.soDienThoai}">Phone</span></div>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="${nd.vaiTro == 'ROLE_ADMIN'} ? 'bg-danger' : 'bg-primary-custom'" th:text="${nd.vaiTro == 'ROLE_ADMIN' ? 'Quản trị viên' : 'Khách hàng'}"></span>
+                                        </td>
+                                        <td th:text="${#temporals.format(nd.ngayTao, 'dd/MM/yyyy')}">Date</td>
+                                        <td class="text-end pe-4">
+                                            <form th:if="${nd.vaiTro != 'ROLE_ADMIN'}" th:action="@{/admin/users/delete/{id}(id=${nd.userId})}" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa khách hàng này? Mọi đơn hàng liên quan có thể bị ảnh hưởng.');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Xóa khách hàng"><i class="fa-regular fa-trash-can"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(nguoiDungs)}">
+                                        <td colspan="6" class="text-center text-muted py-4">Không tìm thấy người dùng nào</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

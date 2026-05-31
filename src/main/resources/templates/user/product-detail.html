@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head(${sanPham.tenSanPham})}"></head>
+<body class="bg-light-custom font-inter">
+
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-bottom py-3">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/products}" class="text-decoration-none text-muted">Sản phẩm</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/products(danhMucId=${sanPham.danhMuc.danhMucId})}" class="text-decoration-none text-muted" th:text="${sanPham.danhMuc.tenDanhMuc}">Danh mục</a></li>
+                    <li class="breadcrumb-item active text-primary-custom fw-medium" aria-current="page" th:text="${sanPham.tenSanPham}">Tên bánh</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Product Detail -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-5 bg-white p-4 p-md-5 rounded-4 shadow-sm">
+                <!-- Hình ảnh -->
+                <div class="col-md-6">
+                    <div class="rounded-4 overflow-hidden border">
+                        <img th:src="${sanPham.hinhAnh}" class="w-100 object-fit-cover" alt="Product" style="max-height: 500px;">
+                    </div>
+                </div>
+                
+                <!-- Thông tin -->
+                <div class="col-md-6">
+                    <div class="badge bg-light text-primary-custom mb-3 px-3 py-2 rounded-pill border border-primary-custom" th:text="${sanPham.danhMuc.tenDanhMuc}">Category</div>
+                    <h2 class="font-playfair fw-bold mb-3 display-6" th:text="${sanPham.tenSanPham}">Tên Sản Phẩm</h2>
+                    
+                    <div class="fs-3 fw-bold text-primary-custom mb-4" th:text="${#numbers.formatDecimal(sanPham.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</div>
+                    
+                    <p class="text-muted mb-4 lh-lg" th:text="${sanPham.moTa}">Mô tả chi tiết sản phẩm...</p>
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fa-solid fa-box text-muted me-2"></i>
+                        <span class="text-muted">Tình trạng: </span>
+                        <span class="badge bg-success ms-2" th:if="${sanPham.soLuongTon > 0}">Còn hàng (<span th:text="${sanPham.soLuongTon}"></span>)</span>
+                        <span class="badge bg-danger ms-2" th:if="${sanPham.soLuongTon == 0}">Hết hàng</span>
+                    </div>
+
+                    <form th:action="@{/cart/add}" method="post" class="p-4 bg-light-custom rounded-4 border">
+                        <input type="hidden" name="sanPhamId" th:value="${sanPham.sanPhamId}">
+                        <div class="row align-items-center g-3">
+                            <div class="col-auto">
+                                <label for="soLuong" class="form-label fw-medium mb-0">Số lượng:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="soLuong" name="soLuong" class="form-control text-center rounded-pill" value="1" min="1" th:max="${sanPham.soLuongTon}" style="width: 100px;">
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary-custom rounded-pill w-100 py-2 shadow-sm" th:disabled="${sanPham.soLuongTon == 0}">
+                                    <i class="fa-solid fa-cart-plus me-2"></i>Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Sản phẩm gợi ý -->
+            <div class="mt-5 pt-5 border-top" th:if="${not #lists.isEmpty(sanPhamGoiY)}">
+                <h3 class="font-playfair text-primary-custom text-center mb-5">Sản Phẩm Cùng Danh Mục</h3>
+                <div class="row g-4">
+                    <div class="col-md-3 col-sm-6" th:each="sp : ${sanPhamGoiY}">
+                        <div class="card product-card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="product-img-wrapper position-relative" style="height: 200px; overflow: hidden;">
+                                <img th:src="${sp.hinhAnh}" class="w-100 h-100 object-fit-cover" alt="Product">
+                                <div class="product-action position-absolute w-100 bottom-0 start-0 text-center pb-3">
+                                    <a th:href="@{/products/{id}(id=${sp.sanPhamId})}" class="btn btn-light rounded-pill btn-sm shadow"><i class="fa-regular fa-eye"></i> Xem</a>
+                                </div>
+                            </div>
+                            <div class="card-body text-center p-3">
+                                <h6 class="card-title fw-bold mb-2 text-truncate" th:text="${sp.tenSanPham}">Name</h6>
+                                <div class="price text-primary-custom fw-bold" th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{layout/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head('Về Chúng Tôi')}"></head>
+<body class="bg-light-custom font-inter">
+
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <!-- Page Header -->
+    <section class="py-5 text-white text-center position-relative"
+             style="background: url('/images/products/hero-banner.jpg') center/cover no-repeat; min-height: 300px; display:flex; align-items:center; justify-content:center;">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.55);"></div>
+        <div class="position-relative z-1">
+            <h1 class="display-4 font-playfair fw-bold mb-3">Về Chúng Tôi</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-white-50 text-decoration-none">Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Về Chúng Tôi</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Câu chuyện thương hiệu -->
+    <section class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="/images/products/about-us.jpg"
+                         alt="MeDoNgot Bakery" class="img-fluid rounded-4 shadow">
+                </div>
+                <div class="col-lg-6 ps-lg-5">
+                    <h2 class="font-playfair text-primary-custom display-5 mb-4">Câu Chuyện Của MeDoNgot</h2>
+                    <p class="lead text-muted mb-4">
+                        Mỗi chiếc bánh là một tác phẩm nghệ thuật, được tạo ra từ tình yêu và đam mê của những thợ làm bánh lành nghề nhất.
+                    </p>
+                    <p class="text-secondary mb-3">
+                        Chúng tôi sử dụng những nguyên liệu cao cấp nhất, kết hợp công thức truyền thống với khẩu vị tinh tế của người Việt,
+                        mang đến trải nghiệm ẩm thực khó quên cho mỗi khách hàng.
+                    </p>
+                    <p class="text-secondary mb-4">
+                        Thành lập với mong muốn mang hương vị thơm ngon và không gian ấm cúng đến từng gia đình,
+                        MeDoNgot tự hào là điểm đến tin yêu của những tín đồ bánh ngọt.
+                    </p>
+                    <a th:href="@{/products}" class="btn btn-primary-custom rounded-pill px-5">Khám Phá Sản Phẩm</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Giá trị cốt lõi -->
+    <section class="py-5 bg-light-custom">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="font-playfair text-primary-custom">Giá Trị Của Chúng Tôi</h2>
+                <div class="divider-custom mx-auto mt-3"></div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                        <div class="fs-1 text-primary-custom mb-3"><i class="fa-solid fa-heart"></i></div>
+                        <h5 class="fw-bold mb-2">Làm Bằng Tình Yêu</h5>
+                        <p class="text-muted small mb-0">Mỗi sản phẩm được làm thủ công với tất cả tâm huyết và đam mê của người thợ bánh.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                        <div class="fs-1 text-primary-custom mb-3"><i class="fa-solid fa-leaf"></i></div>
+                        <h5 class="fw-bold mb-2">Nguyên Liệu Sạch</h5>
+                        <p class="text-muted small mb-0">Cam kết sử dụng nguyên liệu tươi ngon, sạch sẽ, không chất bảo quản độc hại.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                        <div class="fs-1 text-primary-custom mb-3"><i class="fa-solid fa-star"></i></div>
+                        <h5 class="fw-bold mb-2">Chất Lượng Vượt Trội</h5>
+                        <p class="text-muted small mb-0">Tiêu chuẩn kiểm soát chất lượng nghiêm ngặt từ khâu nguyên liệu đến thành phẩm.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                        <div class="fs-1 text-primary-custom mb-3"><i class="fa-solid fa-truck-fast"></i></div>
+                        <h5 class="fw-bold mb-2">Giao Hàng Nhanh</h5>
+                        <p class="text-muted small mb-0">Đảm bảo bánh đến tay khách hàng tươi ngon, đúng hẹn, an toàn nhất.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Thông tin liên hệ -->
+    <section class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="font-playfair text-primary-custom">Tìm Chúng Tôi</h2>
+                <div class="divider-custom mx-auto mt-3"></div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4 text-center">
+                    <div class="p-4">
+                        <div class="fs-2 text-primary-custom mb-3"><i class="fa-solid fa-location-dot"></i></div>
+                        <h5 class="fw-bold mb-2">Địa Chỉ</h5>
+                        <p class="text-muted">123 Đường Bánh Ngọt, Quận 1, TP.HCM</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-4">
+                        <div class="fs-2 text-primary-custom mb-3"><i class="fa-solid fa-phone"></i></div>
+                        <h5 class="fw-bold mb-2">Điện Thoại</h5>
+                        <p class="text-muted">1900 1234</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-4">
+                        <div class="fs-2 text-primary-custom mb-3"><i class="fa-solid fa-clock"></i></div>
+                        <h5 class="fw-bold mb-2">Giờ Mở Cửa</h5>
+                        <p class="text-muted">Thứ 2 – Chủ nhật: 7:00 – 22:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{layout/footer :: footer}"></div>
+</body>
+</html>

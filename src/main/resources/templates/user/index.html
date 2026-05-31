@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head('Trang Chủ')}"></head>
+<body class="bg-light-custom font-inter">
+
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner d-flex align-items-center justify-content-center text-center text-white position-relative" 
+             style="height: 80vh; min-height: 500px; background: url('/images/products/hero-banner.jpg') center/cover no-repeat;">
+        <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.5);"></div>
+        <div class="container position-relative z-1" data-aos="fade-up">
+            <h1 class="display-3 font-playfair fw-bold mb-4">Hương Vị Pháp<br>Tinh Tế Mỗi Ngày</h1>
+            <p class="lead mb-4 fs-4">Đánh thức giác quan với những chiếc bánh ngọt ngào nhất</p>
+            <a th:href="@{/products}" class="btn btn-primary-custom btn-lg rounded-pill px-5 shadow-sm">Khám Phá Ngay</a>
+        </div>
+    </section>
+
+    <!-- Danh mục -->
+    <section class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="font-playfair text-primary-custom">Danh Mục Sản Phẩm</h2>
+                <div class="divider-custom mx-auto mt-3"></div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-3 col-sm-6 text-center" th:each="dm : ${danhMucs}">
+                    <a th:href="@{/products(danhMucId=${dm.danhMucId})}" class="text-decoration-none text-dark category-card d-block p-4 rounded-3 shadow-sm border border-light">
+                        <i th:class="${dm.icon} + ' fs-1 text-primary-custom mb-3'"></i>
+                        <h5 class="fw-bold mb-0" th:text="${dm.tenDanhMuc}">Danh Mục</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sản phẩm nổi bật -->
+    <section class="py-5 bg-light-custom">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="font-playfair text-primary-custom">Sản Phẩm Nổi Bật</h2>
+                <div class="divider-custom mx-auto mt-3"></div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-xl-3 col-lg-4 col-md-6" th:each="sp : ${sanPhamNoiBat}">
+                    <div class="card product-card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="product-img-wrapper position-relative" style="height: 250px; overflow: hidden;">
+                            <img th:src="${sp.hinhAnh}" class="w-100 h-100 object-fit-cover" alt="Product Image">
+                            <div class="product-action position-absolute w-100 bottom-0 start-0 text-center pb-3">
+                                <a th:href="@{/products/{id}(id=${sp.sanPhamId})}" class="btn btn-light rounded-pill btn-sm shadow me-2"><i class="fa-regular fa-eye"></i> Xem</a>
+                                <form th:action="@{/cart/add}" method="post" class="d-inline">
+                                    <input type="hidden" name="sanPhamId" th:value="${sp.sanPhamId}">
+                                    <button type="submit" class="btn btn-primary-custom rounded-pill btn-sm shadow"><i class="fa-solid fa-cart-plus"></i> Mua</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <p class="text-muted small mb-2" th:text="${sp.danhMuc.tenDanhMuc}">Category</p>
+                            <h5 class="card-title fw-bold mb-3 text-truncate" th:text="${sp.tenSanPham}">Product Name</h5>
+                            <div class="price text-primary-custom fw-bold fs-5" th:text="${#numbers.formatDecimal(sp.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a th:href="@{/products}" class="btn btn-outline-custom rounded-pill px-5">Xem Tất Cả Sản Phẩm</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Về Chúng Tôi -->
+    <section id="about" class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="/images/products/about-us.jpg" alt="About Us" class="img-fluid rounded-4 shadow">
+                </div>
+                <div class="col-lg-6 ps-lg-5">
+                    <h2 class="font-playfair text-primary-custom display-5 mb-4">Câu Chuyện Của MeDoNgot</h2>
+                    <p class="lead text-muted mb-4">Mỗi chiếc bánh là một tác phẩm nghệ thuật, được tạo ra từ tình yêu và đam mê của những thợ làm bánh lành nghề nhất.</p>
+                    <p class="text-secondary mb-4">Chúng tôi sử dụng những nguyên liệu cao cấp nhất, kết hợp công thức truyền thống Pháp với khẩu vị tinh tế của người Việt, mang đến trải nghiệm ẩm thực khó quên.</p>
+                    <a th:href="@{/about}" class="btn btn-primary-custom rounded-pill px-4">Tìm hiểu thêm</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{layout/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand text-primary-custom fs-3 fw-bold font-playfair" th:href="@{/}">
+            <i class="fa-solid fa-cake-candles me-2"></i>MeDoNgot
+        </a>
+
+        <!-- Toggle btn for mobile -->
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu giữa -->
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-medium font-inter">
+                <li class="nav-item">
+                    <a class="nav-link px-3" th:href="@{/}">TRANG CHỦ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3" th:href="@{/products}">SẢN PHẨM</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3" th:href="@{/about}">VỀ CHÚNG TÔI</a>
+                </li>
+            </ul>
+
+            <!-- Cart / Login phải -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Giỏ hàng -->
+                <a th:href="@{/cart}" class="btn btn-outline-custom rounded-pill position-relative px-3 font-inter">
+                    <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+                </a>
+
+                <!-- User menu (Chưa đăng nhập) -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn btn-primary-custom rounded-pill px-4 font-inter">Đăng nhập</a>
+                </div>
+
+                <!-- User menu (Đã đăng nhập) -->
+                <div sec:authorize="isAuthenticated()" class="dropdown font-inter">
+                    <button class="btn btn-light rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-regular fa-user me-1"></i> <span sec:authentication="name">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="dropdown-item py-2" th:href="@{/admin}"><i class="fa-solid fa-gauge me-2 text-muted"></i>Quản trị</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" th:href="@{/profile}"><i class="fa-regular fa-id-card me-2 text-muted"></i>Hồ sơ cá nhân</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" th:href="@{/orders}"><i class="fa-solid fa-clock-rotate-left me-2 text-muted"></i>Lịch sử đơn hàng</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger py-2">
+                                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>
