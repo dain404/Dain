@@ -27,7 +27,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
     List<DonHang> findByNguoiDung_UserIdAndTrangThai(Long userId, TrangThaiDonHang trangThai);
 
     // Tổng doanh thu trong khoảng thời gian (JPQL)
-    @Query("SELECT COALESCE(SUM(d.tongTien), 0) FROM DonHang d WHERE d.trangThai = 'HOAN_THANH' AND d.ngayDatHang BETWEEN :tuNgay AND :denNgay")
+    @Query("SELECT COALESCE(SUM(d.tongTien), 0) FROM DonHang d WHERE d.trangThai = com.example.bakery_shop.entity.TrangThaiDonHang.HOAN_THANH AND d.ngayDatHang BETWEEN :tuNgay AND :denNgay")
     BigDecimal tinhDoanhThu(@Param("tuNgay") LocalDateTime tuNgay, @Param("denNgay") LocalDateTime denNgay);
 
     // Đếm số đơn theo trạng thái

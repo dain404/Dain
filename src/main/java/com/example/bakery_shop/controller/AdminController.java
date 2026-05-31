@@ -62,7 +62,34 @@ public class AdminController {
     @PostMapping("/products/save")
     public String luuSanPham(@ModelAttribute SanPham sanPham,
                               @RequestParam Long danhMucId,
+                              @RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
                               RedirectAttributes redirectAttrs) {
+        
+        // Xử lý upload ảnh nếu có file mới được tải lên
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Tạo thư mục "uploads" nếu chưa có
+                java.nio.file.Path uploadPath = java.nio.file.Paths.get("uploads");
+                if (!java.nio.file.Files.exists(uploadPath)) {
+                    java.nio.file.Files.createDirectories(uploadPath);
+                }
+                // Tạo tên file duy nhất tránh trùng lặp
+                String uniqueFilename = java.util.UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+                java.nio.file.Path filePath = uploadPath.resolve(uniqueFilename);
+                java.nio.file.Files.copy(imageFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                
+                // Lưu đường dẫn phục vụ tĩnh vào DB
+                sanPham.setHinhAnh("/uploads/" + uniqueFilename);
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        } else if (sanPham.getSanPhamId() != null) {
+            // Trường hợp cập nhật nhưng không tải lên tệp mới, giữ lại ảnh cũ
+            sanPhamService.timTheoId(sanPham.getSanPhamId()).ifPresent(oldSp -> {
+                sanPham.setHinhAnh(oldSp.getHinhAnh());
+            });
+        }
+
         danhMucService.timTheoId(danhMucId).ifPresent(sanPham::setDanhMuc);
         sanPhamService.luu(sanPham);
         redirectAttrs.addFlashAttribute("thanhCong",

@@ -35,20 +35,19 @@ spring.datasource.username=TÊN_ĐĂNG_NHẬP_CỦA_BẠN (ví dụ: sa)
 spring.datasource.password=MẬT_KHẨU_CỦA_BẠN
 ```
 
-### Bước 3: Khởi động ứng dụng (Lần đầu để tạo bảng)
-Chạy ứng dụng lần đầu để Spring Boot tự động tạo cấu trúc các bảng trong Database:
-- **Cách 1**: Mở file `BakeryShopApplication.java` trong IDE và bấm nút Run.
-- **Cách 2**: Chạy bằng lệnh Terminal:
-  ```bash
-  ./mvnw spring-boot:run
-  ```
+### Bước 3: Khởi động ứng dụng
+Khởi động ứng dụng bằng IDE của bạn (chạy file `BakeryShopApplication.java`) hoặc dùng lệnh Terminal:
+```bash
+./mvnw spring-boot:run
+```
 
-### Bước 4: Chèn dữ liệu mẫu (Rất quan trọng)
-Sau khi ứng dụng đã chạy lên thành công và **các bảng đã được tạo ra**, bạn cần nạp dữ liệu mẫu vào (sản phẩm, tài khoản đăng nhập).
+> 🌟 **Điểm cộng đặc biệt**: Hệ thống đã được tích hợp cơ chế tự động nạp dữ liệu mẫu (`DataInitializer.java`). Ngay khi ứng dụng khởi chạy lần đầu tiên, các bảng cơ sở dữ liệu sẽ tự động được tạo ra và các danh mục, 10 sản phẩm mẫu (kèm ảnh), cùng với 2 tài khoản thử nghiệm (`admin@bakery.com`, `user@bakery.com`) sẽ tự động được chèn vào DB. Bạn **không cần phải chạy lệnh SQL thủ công nào**!
 
-1. Mở lại **SQL Server Management Studio**.
+### Bước 4: Chèn dữ liệu thủ công (Không bắt buộc - Chỉ dùng làm dự phòng)
+Nếu vì lý do nào đó bạn muốn đặt lại dữ liệu gốc từ đầu:
+1. Mở **SQL Server Management Studio**.
 2. Mở file `src/main/resources/database-init.sql`.
-3. Bấm **Execute** (F5) để chạy toàn bộ dữ liệu mẫu vào database `BanhNgotDB`.
+3. Bấm **Execute** (F5) để chạy thủ công dữ liệu mẫu vào database `BanhNgotDB`.
 
 ---
 
