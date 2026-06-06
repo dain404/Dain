@@ -120,6 +120,21 @@
                     </div>
                 </div>
 
+                <!-- Phân trang -->
+                <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link rounded-start-pill" th:href="@{/admin/products(page=${currentPage - 1})}">Trước</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link text-muted bg-light">Trang <span th:text="${currentPage + 1}"></span> / <span th:text="${totalPages}"></span></span>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link rounded-end-pill" th:href="@{/admin/products(page=${currentPage + 1})}">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
         </div>
     </div>

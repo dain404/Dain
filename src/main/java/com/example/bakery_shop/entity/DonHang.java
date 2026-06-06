@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(com.example.bakery_shop.listener.DonHangListener.class)
 public class DonHang {
 
     // Khóa chính tự tăng
@@ -68,6 +69,15 @@ public class DonHang {
     @OneToOne(mappedBy = "donHang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private ThanhToan thanhToan;
+
+    // Trường không lưu vào DB để nhớ trạng thái cũ
+    @Transient
+    private TrangThaiDonHang trangThaiCu;
+
+    @PostLoad
+    protected void onLoad() {
+        this.trangThaiCu = this.trangThai;
+    }
 
     @PrePersist
     protected void onCreate() {

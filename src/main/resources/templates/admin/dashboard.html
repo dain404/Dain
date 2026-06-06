@@ -91,6 +91,30 @@
                     </div>
                 </div>
 
+                <!-- Biểu đồ -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                                <h5 class="fw-bold mb-0">Doanh Thu 7 Ngày Qua</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <canvas id="revenueChart" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                                <h5 class="fw-bold mb-0">Top 5 Bán Chạy</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <canvas id="topProductsChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Đơn hàng gần đây -->
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
@@ -139,5 +163,142 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="notificationToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold text-white" id="notificationMessage">
+                    <!-- Message goes here -->
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SockJS & STOMP -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.0.0/bundles/stomp.umd.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const stompClient = new window.StompJs.Client({
+                webSocketFactory: () => new SockJS('/ws'),
+                onConnect: (frame) => {
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe('/topic/don-hang', (message) => {
+                        const data = JSON.parse(message.body);
+                        showNotification(data);
+                        reloadRecentOrders();
+                    });
+                },
+                onStompError: (frame) => {
+                    console.error('Broker error: ' + frame.headers['message']);
+                }
+            });
+
+            stompClient.activate();
+
+            function showNotification(data) {
+                const toastEl = document.getElementById('notificationToast');
+                const messageEl = document.getElementById('notificationMessage');
+                
+                messageEl.textContent = `Đơn #${data.donHangId} → ${data.tenHienThi}`;
+                
+                // Reset colors
+                toastEl.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-info', 'text-dark', 'text-white');
+                messageEl.classList.remove('text-dark', 'text-white');
+                
+                if (data.trangThai === 'HOAN_THANH') {
+                    toastEl.classList.add('bg-success');
+                    messageEl.classList.add('text-white');
+                } else if (data.trangThai === 'DANG_GIAO') {
+                    toastEl.classList.add('bg-warning');
+                    messageEl.classList.add('text-dark');
+                } else if (data.trangThai === 'HUY') {
+                    toastEl.classList.add('bg-danger');
+                    messageEl.classList.add('text-white');
+                } else {
+                    toastEl.classList.add('bg-info');
+                    messageEl.classList.add('text-white');
+                }
+                
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+
+            function reloadRecentOrders() {
+                fetch(window.location.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const doc = new DOMParser().parseFromString(html, 'text/html');
+                        const newTable = doc.querySelector('.table-responsive').innerHTML;
+                        document.querySelector('.table-responsive').innerHTML = newTable;
+                    })
+                    .catch(err => console.error('Failed to reload orders table', err));
+            }
+        });
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const chartDoanhThuData = /*[[${chartDoanhThu}]]*/ '[]';
+                const chartTopSPData = /*[[${chartTopSP}]]*/ '[]';
+                
+                const parsedDoanhThu = JSON.parse(chartDoanhThuData || '[]');
+                const parsedTopSP = JSON.parse(chartTopSPData || '[]');
+
+                // Line Chart Doanh Thu
+                if(document.getElementById('revenueChart')) {
+                    const revLabels = parsedDoanhThu.map(item => new Date(item[0]).toLocaleDateString('vi-VN'));
+                    const revData = parsedDoanhThu.map(item => item[1]);
+                    
+                    new Chart(document.getElementById('revenueChart'), {
+                        type: 'line',
+                        data: {
+                            labels: revLabels,
+                            datasets: [{
+                                label: 'Doanh thu (VNĐ)',
+                                data: revData,
+                                borderColor: '#198754',
+                                backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+
+                // Doughnut Chart Top SP
+                if(document.getElementById('topProductsChart')) {
+                    const spLabels = parsedTopSP.map(item => item[0]);
+                    const spData = parsedTopSP.map(item => item[1]);
+                    
+                    new Chart(document.getElementById('topProductsChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: spLabels,
+                            datasets: [{
+                                data: spData,
+                                backgroundColor: ['#0d6efd', '#6610f2', '#d63384', '#fd7e14', '#ffc107']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+            } catch(e) {
+                console.error("Lỗi render chart:", e);
+            }
+        });
+    </script>
 </body>
 </html>

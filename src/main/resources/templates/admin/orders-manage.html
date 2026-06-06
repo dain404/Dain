@@ -50,6 +50,9 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="font-playfair text-primary-custom mb-0">Quản Lý Đơn Hàng</h3>
+                    <a th:href="@{/admin/export/revenue(month=${#temporals.month(#temporals.createNow())}, year=${#temporals.year(#temporals.createNow())})}" class="btn btn-success rounded-pill shadow-sm">
+                        <i class="fa-solid fa-file-excel me-2"></i>Xuất Excel tháng này
+                    </a>
                 </div>
 
                 <!-- Bảng Danh sách đơn hàng -->
@@ -84,13 +87,19 @@
                                                   th:text="${dh.trangThai.tenHienThi}">Status</span>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <!-- Form cập nhật trạng thái -->
-                                            <form th:action="@{/admin/orders/{id}/status(id=${dh.donHangId})}" method="post" class="d-flex gap-2 justify-content-end">
-                                                <select name="trangThai" class="form-select form-select-sm w-auto rounded-pill" th:disabled="${dh.trangThai.name() == 'HOAN_THANH' || dh.trangThai.name() == 'HUY'}">
-                                                    <option th:each="tt : ${trangThais}" th:value="${tt}" th:text="${tt.tenHienThi}" th:selected="${tt == dh.trangThai}"></option>
-                                                </select>
-                                                <button type="submit" class="btn btn-sm btn-primary-custom rounded-pill shadow-sm" th:disabled="${dh.trangThai.name() == 'HOAN_THANH' || dh.trangThai.name() == 'HUY'}">Lưu</button>
-                                            </form>
+                                            <div class="d-flex gap-2 justify-content-end align-items-center">
+                                                <!-- Xuất PDF -->
+                                                <a th:href="@{/admin/orders/{id}/invoice(id=${dh.donHangId})}" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm" title="Xuất Hóa Đơn PDF">
+                                                    <i class="fa-solid fa-file-pdf"></i> Xuất PDF
+                                                </a>
+                                                <!-- Form cập nhật trạng thái -->
+                                                <form th:action="@{/admin/orders/{id}/status(id=${dh.donHangId})}" method="post" class="d-flex gap-2 mb-0">
+                                                    <select name="trangThai" class="form-select form-select-sm w-auto rounded-pill" th:disabled="${dh.trangThai.name() == 'HOAN_THANH' || dh.trangThai.name() == 'HUY'}">
+                                                        <option th:each="tt : ${trangThais}" th:value="${tt}" th:text="${tt.tenHienThi}" th:selected="${tt == dh.trangThai}"></option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm btn-primary-custom rounded-pill shadow-sm" th:disabled="${dh.trangThai.name() == 'HOAN_THANH' || dh.trangThai.name() == 'HUY'}">Lưu</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr th:if="${#lists.isEmpty(donHangs)}">
@@ -101,6 +110,21 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Phân trang -->
+                <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link rounded-start-pill" th:href="@{/admin/orders(page=${currentPage - 1})}">Trước</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link text-muted bg-light">Trang <span th:text="${currentPage + 1}"></span> / <span th:text="${totalPages}"></span></span>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                            <a class="page-link rounded-end-pill" th:href="@{/admin/orders(page=${currentPage + 1})}">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
 
             </div>
         </div>

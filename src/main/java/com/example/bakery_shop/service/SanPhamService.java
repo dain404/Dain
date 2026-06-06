@@ -4,6 +4,7 @@ import com.example.bakery_shop.entity.SanPham;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 
 /**
  * Interface service sản phẩm
@@ -11,6 +12,8 @@ import java.util.Optional;
 public interface SanPhamService {
 
     List<SanPham> layTatCa();
+
+    Page<SanPham> layTatCa(int page, int size);
 
     List<SanPham> layDangBan();
 

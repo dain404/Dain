@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * Triển khai service người dùng
@@ -49,6 +52,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     public List<NguoiDung> layTatCa() {
         return nguoiDungRepository.findAll();
+    }
+
+    @Override
+    public Page<NguoiDung> layTatCa(int page, int size) {
+        return nguoiDungRepository.findAll(PageRequest.of(page, size, Sort.by("userId").descending()));
     }
 
     @Override

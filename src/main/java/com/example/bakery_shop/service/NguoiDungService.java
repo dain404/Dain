@@ -4,6 +4,7 @@ import com.example.bakery_shop.entity.NguoiDung;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 
 /**
  * Interface service người dùng
@@ -21,6 +22,8 @@ public interface NguoiDungService {
 
     // Lấy tất cả người dùng
     List<NguoiDung> layTatCa();
+
+    Page<NguoiDung> layTatCa(int page, int size);
 
     // Cập nhật thông tin cá nhân
     NguoiDung capNhatThongTin(NguoiDung nguoiDung);

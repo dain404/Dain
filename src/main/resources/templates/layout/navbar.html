@@ -30,6 +30,10 @@
 
             <!-- Cart / Login phải -->
             <div class="d-flex align-items-center gap-3">
+                <!-- Tỷ giá -->
+                <div th:if="${tyGiaFormatted != null}" class="badge bg-light text-dark border px-2 py-2 fs-6 font-inter shadow-sm" title="Tỷ giá tự động cập nhật">
+                    💱 <span th:text="${tyGiaFormatted}"></span>
+                </div>
                 <!-- Giỏ hàng -->
                 <a th:href="@{/cart}" class="btn btn-outline-custom rounded-pill position-relative px-3 font-inter">
                     <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng

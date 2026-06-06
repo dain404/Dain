@@ -32,21 +32,37 @@ public class GioHangServiceImpl implements GioHangService {
     @Override
     @Transactional
     public GioHang themVaoGio(Long userId, Long sanPhamId, int soLuong) {
+        SanPham sanPham = sanPhamRepository.findById(sanPhamId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+        if (sanPham.getTrangThai() != null && !sanPham.getTrangThai()) {
+            throw new RuntimeException("Sản phẩm hiện không còn bán");
+        }
+        if (sanPham.getSoLuongTon() != null && sanPham.getSoLuongTon() == 0) {
+            throw new RuntimeException("Sản phẩm đã hết hàng");
+        }
+
         // Nếu đã có sản phẩm trong giỏ → tăng số lượng
         Optional<GioHang> existing = gioHangRepository
                 .findByNguoiDung_UserIdAndSanPham_SanPhamId(userId, sanPhamId);
 
         if (existing.isPresent()) {
             GioHang gioHang = existing.get();
-            gioHang.setSoLuong(gioHang.getSoLuong() + soLuong);
+            int soLuongMoi = gioHang.getSoLuong() + soLuong;
+            if (sanPham.getSoLuongTon() != null && soLuongMoi > sanPham.getSoLuongTon()) {
+                throw new RuntimeException("Chỉ còn " + sanPham.getSoLuongTon() + " sản phẩm trong kho");
+            }
+            gioHang.setSoLuong(soLuongMoi);
             return gioHangRepository.save(gioHang);
+        }
+
+        if (sanPham.getSoLuongTon() != null && soLuong > sanPham.getSoLuongTon()) {
+            throw new RuntimeException("Chỉ còn " + sanPham.getSoLuongTon() + " sản phẩm trong kho");
         }
 
         // Chưa có → tạo mới
         NguoiDung nguoiDung = nguoiDungRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-        SanPham sanPham = sanPhamRepository.findById(sanPhamId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
         GioHang gioHang = GioHang.builder()
                 .nguoiDung(nguoiDung)

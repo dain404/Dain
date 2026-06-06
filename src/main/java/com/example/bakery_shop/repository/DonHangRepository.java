@@ -36,7 +36,19 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
     // Lấy tất cả đơn hàng, mới nhất trước (admin)
     List<DonHang> findAllByOrderByNgayDatHangDesc();
 
+    // Lấy 5 đơn mới nhất
+    List<DonHang> findTop5ByOrderByNgayDatHangDesc();
+
     // Thống kê doanh thu theo tháng trong năm
     @Query("SELECT MONTH(d.ngayDatHang), SUM(d.tongTien) FROM DonHang d WHERE d.trangThai = com.example.bakery_shop.entity.TrangThaiDonHang.HOAN_THANH AND YEAR(d.ngayDatHang) = :nam GROUP BY MONTH(d.ngayDatHang) ORDER BY MONTH(d.ngayDatHang)")
     List<Object[]> thongKeDoanhThuTheoThang(@Param("nam") int nam);
+    List<DonHang> findByTrangThaiAndNgayDatHangBefore(TrangThaiDonHang trangThai, LocalDateTime threshold);
+
+    @Query("SELECT SUM(d.tongTien) FROM DonHang d WHERE d.trangThai = :tt AND d.ngayDatHang BETWEEN :from AND :to")
+    BigDecimal tinhDoanhThu(@Param("tt") TrangThaiDonHang tt, @Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query(value = "SELECT CAST(ngayDatHang AS DATE) as ngay, SUM(tongTien) as tong " +
+                   "FROM DONHANG WHERE trangThai = 'HOAN_THANH' AND ngayDatHang >= :tuNgay " +
+                   "GROUP BY CAST(ngayDatHang AS DATE) ORDER BY ngay ASC", nativeQuery = true)
+    List<Object[]> thongKeDoanhThu7NgayQua(@Param("tuNgay") LocalDateTime tuNgay);
 }

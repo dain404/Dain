@@ -3,6 +3,7 @@ package com.example.bakery_shop.service;
 import com.example.bakery_shop.entity.*;
 import com.example.bakery_shop.repository.ChiTietDonHangRepository;
 import com.example.bakery_shop.repository.DonHangRepository;
+import com.example.bakery_shop.repository.SanPhamRepository;
 import com.example.bakery_shop.repository.ThanhToanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * Triển khai service đơn hàng
@@ -25,6 +31,9 @@ public class DonHangServiceImpl implements DonHangService {
     private final ChiTietDonHangRepository chiTietDonHangRepository;
     private final ThanhToanRepository thanhToanRepository;
     private final SanPhamService sanPhamService;
+    private final EmailService emailService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final SanPhamRepository sanPhamRepository;
 
     @Override
     @Transactional
@@ -65,6 +74,8 @@ public class DonHangServiceImpl implements DonHangService {
                 .build();
         thanhToanRepository.save(thanhToan);
 
+        emailService.guiEmailXacNhanDonHang(donHangDaLuu);
+
         return donHangDaLuu;
     }
 
@@ -84,6 +95,16 @@ public class DonHangServiceImpl implements DonHangService {
     }
 
     @Override
+    public List<DonHang> layNamDonMoiNhat() {
+        return donHangRepository.findTop5ByOrderByNgayDatHangDesc();
+    }
+
+    @Override
+    public Page<DonHang> layTatCa(int page, int size) {
+        return donHangRepository.findAll(PageRequest.of(page, size, Sort.by("ngayDatHang").descending()));
+    }
+
+    @Override
     @Transactional
     public DonHang capNhatTrangThai(Long donHangId, TrangThaiDonHang trangThaiMoi) {
         DonHang donHang = donHangRepository.findById(donHangId)
@@ -97,7 +118,14 @@ public class DonHangServiceImpl implements DonHangService {
                 thanhToanRepository.save(tt);
             });
         }
-        return donHangRepository.save(donHang);
+        DonHang donHangDaCapNhat = donHangRepository.save(donHang);
+        emailService.guiEmailThayDoiTrangThai(donHangDaCapNhat, trangThaiMoi);
+        
+        messagingTemplate.convertAndSend("/topic/don-hang", 
+                Map.of("donHangId", donHangId, "trangThai", trangThaiMoi.name(), 
+                       "tenHienThi", trangThaiMoi.getTenHienThi()));
+                       
+        return donHangDaCapNhat;
     }
 
     @Override
@@ -110,8 +138,17 @@ public class DonHangServiceImpl implements DonHangService {
             throw new RuntimeException("Bạn không có quyền hủy đơn hàng này");
         }
         if (!TrangThaiDonHang.CHO_XAC_NHAN.equals(donHang.getTrangThai())) {
-            throw new RuntimeException("Chỉ có thể hủy đơn hàng đang ở trạng thái 'Chờ xác nhận'");
+            throw new IllegalStateException("Đơn hàng đã được xử lý, không thể hủy");
         }
+
+        // Hoàn lại tồn kho
+        List<ChiTietDonHang> chiTiets = chiTietDonHangRepository.findByDonHangIdFetchSanPham(donHangId);
+        for (ChiTietDonHang ct : chiTiets) {
+            SanPham sp = ct.getSanPham();
+            sp.setSoLuongTon(sp.getSoLuongTon() + ct.getSoLuong());
+            sanPhamRepository.save(sp);
+        }
+
         donHang.setTrangThai(TrangThaiDonHang.HUY);
         donHangRepository.save(donHang);
     }
@@ -121,6 +158,17 @@ public class DonHangServiceImpl implements DonHangService {
         LocalDateTime dauThang = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime cuoiThang = dauThang.plusMonths(1);
         return donHangRepository.tinhDoanhThu(dauThang, cuoiThang);
+    }
+
+    @Override
+    public List<Object[]> thongKeDoanhThu7NgayQua() {
+        LocalDateTime bayNgayTruoc = LocalDateTime.now().minusDays(6).withHour(0).withMinute(0).withSecond(0);
+        return donHangRepository.thongKeDoanhThu7NgayQua(bayNgayTruoc);
+    }
+
+    @Override
+    public List<Object[]> thongKeTop5SanPhamBanChay() {
+        return chiTietDonHangRepository.thongKeSanPhamBanChay(PageRequest.of(0, 5));
     }
 
     @Override

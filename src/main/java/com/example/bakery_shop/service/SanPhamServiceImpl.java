@@ -8,6 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * Triển khai service sản phẩm
@@ -19,8 +24,14 @@ public class SanPhamServiceImpl implements SanPhamService {
     private final SanPhamRepository sanPhamRepository;
 
     @Override
+    @Cacheable("san-pham")
     public List<SanPham> layTatCa() {
         return sanPhamRepository.findAll();
+    }
+
+    @Override
+    public Page<SanPham> layTatCa(int page, int size) {
+        return sanPhamRepository.findAll(PageRequest.of(page, size, Sort.by("sanPhamId").descending()));
     }
 
     @Override
@@ -29,6 +40,7 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
+    @Cacheable(value="san-pham", key="#id")
     public Optional<SanPham> timTheoId(Long id) {
         return sanPhamRepository.findById(id);
     }
@@ -50,12 +62,14 @@ public class SanPhamServiceImpl implements SanPhamService {
 
     @Override
     @Transactional
+    @CacheEvict(value="san-pham", allEntries=true)
     public SanPham luu(SanPham sanPham) {
         return sanPhamRepository.save(sanPham);
     }
 
     @Override
     @Transactional
+    @CacheEvict(value="san-pham", allEntries=true)
     public void xoa(Long id) {
         // Ẩn thay vì xóa cứng để bảo toàn lịch sử đơn hàng
         SanPham sanPham = sanPhamRepository.findById(id)

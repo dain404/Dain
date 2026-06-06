@@ -22,6 +22,6 @@ public interface ChiTietDonHangRepository extends JpaRepository<ChiTietDonHang, 
     List<ChiTietDonHang> findByDonHangIdFetchSanPham(@Param("donHangId") Long donHangId);
 
     // Thống kê sản phẩm bán chạy (top N theo tổng số lượng)
-    @Query("SELECT c.sanPham.sanPhamId, c.sanPham.tenSanPham, SUM(c.soLuong) as tongSoLuong FROM ChiTietDonHang c GROUP BY c.sanPham.sanPhamId, c.sanPham.tenSanPham ORDER BY tongSoLuong DESC")
-    List<Object[]> thongKeSanPhamBanChay();
+    @Query("SELECT c.sanPham.tenSanPham, SUM(c.soLuong) as tongSoLuong FROM ChiTietDonHang c JOIN c.donHang d WHERE d.trangThai = com.example.bakery_shop.entity.TrangThaiDonHang.HOAN_THANH GROUP BY c.sanPham.tenSanPham ORDER BY tongSoLuong DESC")
+    List<Object[]> thongKeSanPhamBanChay(org.springframework.data.domain.Pageable pageable);
 }

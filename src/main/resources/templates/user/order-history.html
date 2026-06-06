@@ -97,9 +97,9 @@
                         <div class="col-md-6 border-start-md">
                             <h6 class="text-muted mb-3 text-uppercase fw-bold"><i class="fa-solid fa-file-invoice me-2"></i>Thông tin đơn</h6>
                             <p class="mb-1 text-muted"><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(donHang.ngayDatHang, 'dd/MM/yyyy HH:mm')}">Date</span></p>
-                            <p class="mb-1 text-muted" th:each="tt : ${donHang.thanhToans}">
-                                <strong>Thanh toán:</strong> <span th:text="${tt.phuongThucThanhToan}"></span> - 
-                                <span th:class="${tt.trangThaiThanhToan == 'DA_THANH_TOAN' ? 'text-success' : 'text-warning'}" th:text="${tt.trangThaiThanhToan}"></span>
+                            <p class="mb-1 text-muted" th:if="${donHang.thanhToan != null}">
+                                <strong>Thanh toán:</strong> <span th:text="${donHang.thanhToan.phuongThucThanhToan}"></span> - 
+                                <span th:class="${donHang.thanhToan.trangThaiThanhToan == 'DA_THANH_TOAN' ? 'text-success' : 'text-warning'}" th:text="${donHang.thanhToan.trangThaiThanhToan}"></span>
                             </p>
                         </div>
                     </div>

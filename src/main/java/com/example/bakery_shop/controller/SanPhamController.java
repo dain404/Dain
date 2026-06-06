@@ -2,6 +2,7 @@ package com.example.bakery_shop.controller;
 
 import com.example.bakery_shop.service.DanhMucService;
 import com.example.bakery_shop.service.SanPhamService;
+import com.example.bakery_shop.service.TyGiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ public class SanPhamController {
 
     private final SanPhamService sanPhamService;
     private final DanhMucService danhMucService;
+    private final TyGiaService tyGiaService;
 
     /**
      * Danh sách sản phẩm — hỗ trợ lọc danh mục và tìm kiếm
@@ -40,6 +42,11 @@ public class SanPhamController {
         model.addAttribute("danhMucs", danhMucService.layTatCa());
         model.addAttribute("danhMucIdHienTai", danhMucId);
         model.addAttribute("keyword", keyword);
+
+        java.math.BigDecimal tyGia = tyGiaService.layTyGiaUSD();
+        model.addAttribute("tyGia", tyGia);
+        model.addAttribute("tyGiaFormatted", "1 USD ≈ " + java.text.NumberFormat.getInstance(java.util.Locale.of("vi", "VN")).format(tyGia) + " VNĐ");
+
         return "user/products";
     }
 

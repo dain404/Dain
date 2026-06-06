@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 /**
  * Triển khai service danh mục
@@ -19,6 +21,7 @@ public class DanhMucServiceImpl implements DanhMucService {
     private final DanhMucRepository danhMucRepository;
 
     @Override
+    @Cacheable("danh-muc")
     public List<DanhMuc> layTatCa() {
         return danhMucRepository.findAll();
     }
@@ -30,6 +33,7 @@ public class DanhMucServiceImpl implements DanhMucService {
 
     @Override
     @Transactional
+    @CacheEvict(value="danh-muc", allEntries=true)
     public DanhMuc luu(DanhMuc danhMuc) {
         return danhMucRepository.save(danhMuc);
     }
